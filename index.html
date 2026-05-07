@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>gRitual — GM on Ritual Testnet</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.2/dist/ethers.umd.min.js" defer></script>
+    <script src="config.js" defer></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <main class="container">
+      <header class="header">
+        <h1>gRitual</h1>
+        <p>gm.ink-style social check-ins on Ritual testnet.</p>
+      </header>
+
+      <section class="card">
+        <div class="row">
+          <button id="connectBtn">Connect Wallet</button>
+          <button id="switchBtn" class="secondary">Switch to Ritual</button>
+        </div>
+        <p id="walletState">Wallet: not connected</p>
+        <p id="networkState">Network: unknown</p>
+      </section>
+
+      <section class="card">
+        <h2>Post your GM</h2>
+        <label for="contractInput">Check-in Contract Address</label>
+        <input id="contractInput" type="text" placeholder="0x..." />
+
+        <label for="messageInput">Message</label>
+        <input id="messageInput" type="text" maxlength="120" placeholder="gm ritual frens" />
+
+        <button id="submitBtn">Submit Check-in</button>
+        <p id="txState"></p>
+      </section>
+
+      <section class="card">
+        <h2>Local Feed</h2>
+        <ul id="feed"></ul>
+      </section>
+    </main>
+  </body>
+</html>
