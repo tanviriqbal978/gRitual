@@ -1,17 +1,20 @@
 window.GRITUAL_CONFIG = {
   network: {
-    chainIdHex: "0x13E31", // placeholder
+    chainId: 1979,
+    chainIdHex: "0x7BB",
     chainName: "Ritual Testnet",
     nativeCurrency: {
-      name: "Ritual",
-      symbol: "RIT",
+      name: "RITUAL",
+      symbol: "RITUAL",
       decimals: 18,
     },
-    rpcUrls: ["https://testnet.ritual.network"], // placeholder
-    blockExplorerUrls: ["https://explorer.testnet.ritual.network"], // placeholder
+    rpcUrls: ["https://rpc.ritualfoundation.org"],
+    blockExplorerUrls: ["https://explorer.ritualfoundation.org"],
   },
+  contractAddress: "0x1df6796388607ceed59f5cbdCaDDafCaD088799b",
   abi: [
     "function checkIn(string message) external",
     "event CheckedIn(address indexed user, string message, uint256 timestamp)",
   ],
+  creatorX: "tanviriqbal0",
 };

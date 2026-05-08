@@ -3,43 +3,65 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>gRitual — GM on Ritual Testnet</title>
+    <title>gRitual — Daily gRitual on Ritual Testnet</title>
     <link rel="stylesheet" href="styles.css" />
     <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.2/dist/ethers.umd.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" defer></script>
     <script src="config.js" defer></script>
     <script src="app.js" defer></script>
   </head>
   <body>
     <main class="container">
-      <header class="header">
-        <h1>gRitual</h1>
-        <p>gm.ink-style social check-ins on Ritual testnet.</p>
+      <header class="header card">
+        <div class="brand">
+          <img src="assets/gritual-logo.svg" alt="gRitual logo" id="brandLogo" />
+          <div>
+            <h1>gRitual</h1>
+            <p>GM becomes gRitual — 1 on-chain ritual per day.</p>
+          </div>
+        </div>
+        <a class="creator" href="https://x.com/tanviriqbal0" target="_blank" rel="noreferrer">Built by @tanviriqbal0</a>
       </header>
 
       <section class="card">
         <div class="row">
           <button id="connectBtn">Connect Wallet</button>
           <button id="switchBtn" class="secondary">Switch to Ritual</button>
+          <button id="refreshBtn" class="secondary">Refresh Leaderboard</button>
         </div>
         <p id="walletState">Wallet: not connected</p>
         <p id="networkState">Network: unknown</p>
       </section>
 
       <section class="card">
-        <h2>Post your GM</h2>
-        <label for="contractInput">Check-in Contract Address</label>
-        <input id="contractInput" type="text" placeholder="0x..." />
+        <h2>Twitter Profile</h2>
+        <label for="twitterInput">Twitter/X Username (manual)</label>
+        <div class="row">
+          <input id="twitterInput" type="text" placeholder="tanviriqbal0" />
+          <button id="saveTwitterBtn">Save Profile</button>
+        </div>
+        <div id="profileBox" class="profile"></div>
+      </section>
 
-        <label for="messageInput">Message</label>
-        <input id="messageInput" type="text" maxlength="120" placeholder="gm ritual frens" />
-
-        <button id="submitBtn">Submit Check-in</button>
+      <section class="card">
+        <h2>Do gRitual</h2>
+        <p class="small">Daily limit: 1x per day (UTC).</p>
+        <button id="submitBtn">Send gRitual (On-chain)</button>
         <p id="txState"></p>
       </section>
 
       <section class="card">
-        <h2>Local Feed</h2>
-        <ul id="feed"></ul>
+        <h2>My Rank Card</h2>
+        <div id="rankCard" class="rank-card"></div>
+        <div class="row">
+          <button id="saveCardBtn" class="secondary">Save Card</button>
+          <button id="tweetCardBtn">Post to X</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Leaderboard</h2>
+        <ul id="leaderboard"></ul>
       </section>
     </main>
   </body>
