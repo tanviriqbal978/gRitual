@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gRitual</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    :root{--bg:#060e09;--primary:#2ecc71;--accent:#27ae60;--text:#d4edda;--muted:#4a7c59;--card:#0b1610;--border:#0f2318}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif}
+    body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.06;background-image:radial-gradient(#fff 1px,transparent 1px);background-size:3px 3px}
+    body:after{content:"";position:fixed;inset:0;pointer-events:none;opacity:.03;background:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500"><circle cx="250" cy="250" r="70" fill="none" stroke="%232ecc71"/><circle cx="250" cy="250" r="120" fill="none" stroke="%232ecc71"/><circle cx="250" cy="250" r="170" fill="none" stroke="%232ecc71"/></svg>') center/560px no-repeat}
+    .mono{font-family:'IBM Plex Mono',monospace}
+    .container{max-width:1000px;margin:0 auto;padding:90px 16px 30px}
+    .nav{position:fixed;top:0;left:0;right:0;height:68px;border-bottom:1px solid var(--border);background:rgba(6,14,9,.96);display:flex;align-items:center;justify-content:space-between;padding:0 16px;z-index:20}
+    .brand{display:flex;align-items:center;gap:10px}.brand img{height:36px}.fallback{display:none;width:36px;height:36px}
+    .brand-text{font-weight:700;color:var(--primary);font-size:1.2rem}
+    button,input{border-radius:10px;border:1px solid var(--border);padding:.7rem .9rem}
+    .btn{background:var(--primary);color:#041009;font-weight:700;cursor:pointer}
+    .btn.secondary{background:#0b1a12;color:var(--text)}
+    .hero{text-align:center;padding:16px 0 24px}.hero h1{font-size:3rem;margin:.2rem 0}.hero .g{font-style:italic;color:var(--primary)}
+    .badge{display:inline-block;border:1px solid var(--border);padding:.35rem .6rem;border-radius:999px;color:var(--muted)}
+    .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.stat,.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px}
+    .stat small,.muted{color:var(--muted)}.stat strong{font-size:1.35rem}
+    .profile{display:none;grid-template-columns:auto 1fr;gap:12px;align-items:center}.profile.show{display:grid}.avatar{width:58px;height:58px;border-radius:50%;border:2px solid var(--accent)}
+    .action{text-align:center;padding:20px 10px}.ritual-btn{width:220px;height:220px;border-radius:999px;border:2px solid #1f4f34;background:#102217;color:var(--text);font-size:2rem}
+    .ritual-btn.pulse{animation:pulse 2s infinite}.ritual-btn:disabled{opacity:.6}
+    @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(46,204,113,.2)}50%{box-shadow:0 0 0 16px rgba(46,204,113,0)}}
+    .ok{color:var(--primary)}
+    .section{margin-top:14px}.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+    .share-preview{background:#09140e;border:1px solid var(--border);border-radius:12px;padding:12px;max-width:460px}
+    .table{width:100%;border-collapse:collapse}.table th,.table td{padding:8px;border-bottom:1px solid var(--border);text-align:left}.hl{background:#103120}
+    .feed-item{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);animation:drop .3s ease}
+    @keyframes drop{from{opacity:0;transform:translateY(-6px)}to{opacity:1}}
+    footer{text-align:center;color:var(--muted);padding:20px}
+    @media(max-width:860px){.grid4{grid-template-columns:repeat(2,1fr)}.hero h1{font-size:2.3rem}.ritual-btn{width:180px;height:180px}}
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="brand">
+      <img id="logoImg" src="logo.png" alt="gRitual logo" onerror="this.style.display='none';document.getElementById('logoFallback').style.display='block';"/>
+      <svg id="logoFallback" class="fallback" viewBox="0 0 100 100"><circle cx="50" cy="50" r="22" fill="none" stroke="#2ecc71"/><path d="M50 8v16M50 76v16M8 50h16M76 50h16M21 21l11 11M68 68l11 11M79 21L68 32M32 68L21 79" stroke="#2ecc71"/></svg>
+      <span class="brand-text">gRitual</span>
+    </div>
+    <button id="connectBtn" class="btn">Connect Wallet</button>
+  </nav>
+
+  <main class="container">
+    <section class="hero">
+      <h1><span class="g">g</span>Ritual</h1>
+      <p>Say gRitual every day. On-chain. Forever.</p>
+      <p class="badge mono">Ritual Testnet · Chain 1979</p>
+    </section>
+
+    <section class="grid4">
+      <div class="stat"><small>Total gRituals</small><br><strong id="stTotal">0</strong></div>
+      <div class="stat"><small>Today's Count</small><br><strong id="stToday">0</strong></div>
+      <div class="stat"><small>Unique Wallets</small><br><strong id="stWallets">0</strong></div>
+      <div class="stat"><small>Top Streak</small><br><strong id="stTop">0</strong></div>
+    </section>
+
+    <section class="card section">
+      <div id="twitterSetup" class="row"><input id="twitterInput" placeholder="Enter your Twitter username" /><button id="saveTwitter" class="btn secondary">Save Twitter</button></div>
+      <div id="profile" class="profile"></div>
+    </section>
+
+    <section class="action section card">
+      <button id="ritualBtn" class="ritual-btn">gRitual ☀</button>
+      <p class="muted">Tap once per day</p>
+      <p id="status"></p>
+      <p id="countdown" class="mono muted"></p>
+    </section>
+
+    <section class="card section">
+      <h3>Share Card Generator</h3>
+      <div class="row"><input id="shareUsername" placeholder="Twitter username" /><button id="saveCard" class="btn secondary">Save Card</button><button id="postX" class="btn">Post to X</button></div>
+      <div id="shareCard" class="share-preview section"></div>
+    </section>
+
+    <section class="card section">
+      <h3>gRitual Leaderboard</h3>
+      <div class="row"><button class="btn secondary" id="tabCount">Most gRituals</button><button class="btn secondary" id="tabStreak">Longest Streak</button></div>
+      <table class="table mono"><thead><tr><th>Rank</th><th>PFP</th><th>Username</th><th>Count</th><th>Streak</th><th>Last Active</th></tr></thead><tbody id="leaderRows"></tbody></table>
+    </section>
+
+    <section class="card section"><h3>Recent gRituals</h3><div id="feed"></div></section>
+  </main>
+
+  <footer>
+    <div>gRitual · Built on Ritual Chain · Chain ID 1979</div>
+    <a href="https://x.com/tanviriqbal0" target="_blank" style="color:#2ecc71">Built by @tanviriqbal0</a>
+  </footer>
+
+<script>
+const CFG={chainId:1979,chainHex:'0x7BB',rpc:'https://rpc.ritualfoundation.org',explorer:'https://explorer.ritualfoundation.org',contract:'0x1df6796388607ceed59f5cbdCaDDafCaD088799b',abi:[{"inputs":[],"name":"greet","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"name":"user","type":"address"}],"name":"getCount","outputs":[{"name":"","type":"uint256"}],"stateMutability":"view","type":"function"}]};
+const K={users:'gr_users_v1',feed:'gr_feed_v1',session:'gr_session_v1'};
+let provider,signer,address,txLink='',sortMode='count';
+const $=id=>document.getElementById(id); const today=()=>new Date().toISOString().slice(0,10);
+const short=a=>a?`${a.slice(0,6)}...${a.slice(-4)}`:'';
+const load=(k,d)=>JSON.parse(localStorage.getItem(k)||JSON.stringify(d));
+const save=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+function seed(){const users=load(K.users,{}); if(Object.keys(users).length) return; const names=['ritualsam','chainmita','blockrina','onchainer','greenhash','dayledger','soulbyte','txforest']; names.forEach((n,i)=>users['0xdemo'+i]={username:n,count:3+i,streak:1+(i%5),best:2+(i%6),lastDate:'2026-05-0'+((i%8)+1)}); save(K.users,users);}
+function avatar(u){return `https://unavatar.io/twitter/${u||'twitter'}`}
+function getUser(key){const users=load(K.users,{}); return users[key]||{username:'',count:0,streak:0,best:0,lastDate:''}}
+function setUser(key,data){const users=load(K.users,{}); users[key]={...getUser(key),...data}; save(K.users,users);}
+function setProfile(){if(!address) return; const u=getUser(address); $('profile').className='profile show'; $('profile').innerHTML=`<img class='avatar' src='${avatar(u.username)}'><div><div>@${u.username||'set_username'}</div><div class='mono muted'>${short(address)}</div><div>Total ${u.count} · Streak ${u.streak} · Best ${u.best}</div><div>${u.lastDate===today()?'<span class="ok">Said gRitual ✓</span>':'Not yet today'}</div></div>`; $('shareUsername').value=u.username||'';}
+async function connect(){if(!window.ethereum){alert('MetaMask required');return;} provider=new ethers.BrowserProvider(window.ethereum); await provider.send('eth_requestAccounts',[]); signer=await provider.getSigner(); address=(await signer.getAddress()).toLowerCase(); await switchChain(); $('connectBtn').textContent=short(address); $('twitterSetup').style.display='flex'; setProfile(); updateUI();}
+async function switchChain(){try{await window.ethereum.request({method:'wallet_switchEthereumChain',params:[{chainId:CFG.chainHex}]});}catch(e){if(e.code===4902){await window.ethereum.request({method:'wallet_addEthereumChain',params:[{chainId:CFG.chainHex,chainName:'Ritual Testnet',rpcUrls:[CFG.rpc],nativeCurrency:{name:'RITUAL',symbol:'RITUAL',decimals:18},blockExplorerUrls:[CFG.explorer]}]});}}}
+function canRitual(){if(!address) return false; return getUser(address).lastDate!==today();}
+function nextMid(){const d=new Date(); d.setUTCHours(24,0,0,0); return d-new Date();}
+function tick(){const ms=nextMid(); const h=Math.floor(ms/36e5),m=Math.floor(ms%36e5/6e4),s=Math.floor(ms%6e4/1e3); $('countdown').textContent=`Next reset in ${h}h ${m}m ${s}s`;}
+async function doRitual(){if(!signer||!address){$('status').textContent='Connect wallet first.';return;} if(!canRitual()){ $('status').innerHTML='<span class="ok">Come back tomorrow ✓</span>'; return; }
+  const c=new ethers.Contract(CFG.contract,CFG.abi,signer); $('status').textContent='Pending transaction...';
+  try{const tx=await c.greet({value:ethers.parseEther('0.001')}); $('status').textContent='Pending: '+tx.hash; await tx.wait(); txLink=`${CFG.explorer}/tx/${tx.hash}`; onSuccess(tx.hash);}catch(err){try{const tx=await signer.sendTransaction({to:'0x000000000000000000000000000000000000dEaD',value:ethers.parseEther('0.00001')}); await tx.wait(); txLink=`${CFG.explorer}/tx/${tx.hash}`; onSuccess(tx.hash,true);}catch(e){$('status').textContent='Transaction failed. Please retry.';}}
+}
+function onSuccess(hash,fallback=false){const u=getUser(address); const yesterday=new Date(Date.now()-86400000).toISOString().slice(0,10); const streak=u.lastDate===yesterday?u.streak+1:1; const best=Math.max(u.best||0,streak); setUser(address,{count:(u.count||0)+1,lastDate:today(),streak,best,username:u.username||$('twitterInput').value.trim().replace('@','')});
+ const feed=load(K.feed,[]); feed.unshift({username:getUser(address).username||'anon',time:Date.now(),hash}); save(K.feed,feed.slice(0,30));
+ $('status').innerHTML=`<span class='ok'>Confirmed ✓ ${fallback?'(fallback proof tx)':''}</span><br><a href='${CFG.explorer}/tx/${hash}' target='_blank' class='mono' style='color:#2ecc71'>${short(hash)}</a>`; updateUI(); }
+function updateStats(){const users=load(K.users,{}); const arr=Object.entries(users); const total=arr.reduce((a,[,u])=>a+(u.count||0),0); const t=today(); const todayCount=arr.filter(([,u])=>u.lastDate===t).length; const wallets=arr.length; const top=Math.max(0,...arr.map(([,u])=>u.best||0)); $('stTotal').textContent=total; $('stToday').textContent=todayCount; $('stWallets').textContent=wallets; $('stTop').textContent=top;}
+function updateButton(){const btn=$('ritualBtn'); const enabled=!!address&&canRitual(); btn.disabled=!enabled; btn.classList.toggle('pulse',enabled); if(!address)btn.textContent='Connect to gRitual'; else if(enabled)btn.textContent='gRitual ☀'; else btn.textContent='Come back tomorrow ✓';}
+function renderShare(){const u=address?getUser(address):{username:$('shareUsername').value||'anon',count:0,streak:0}; const d=new Date().toLocaleDateString(); const tx=txLink?short(txLink.split('/').pop()):'pending'; $('shareCard').innerHTML=`<div class='row'><img class='avatar' src='${avatar(u.username)}'><div><div>@${u.username} just said gRitual ☀️</div><div class='mono muted'>${d}</div></div></div><div class='row section'><span class='badge mono'>Total ${u.count}</span><span class='badge mono'>Streak ${u.streak||0}</span><span class='badge mono'>${tx}</span><span class='badge mono'>Ritual Testnet</span></div><div class='section muted'>built by @tanviriqbal0</div>`;}
+function renderBoard(){const users=load(K.users,{}); let rows=Object.entries(users).map(([w,u])=>({wallet:w,...u})); rows.sort((a,b)=>sortMode==='count'?(b.count-a.count):(b.streak-a.streak)); rows=rows.slice(0,10); $('leaderRows').innerHTML=rows.map((u,i)=>`<tr class='${address&&u.wallet===address?'hl':''}'><td>${i+1}</td><td><img class='avatar' src='${avatar(u.username)}' style='width:28px;height:28px'></td><td>@${u.username||'anon'}</td><td>${u.count||0}</td><td>${u.streak||0}</td><td>${u.lastDate||'-'}</td></tr>`).join('');}
+function renderFeed(){const feed=load(K.feed,[]).slice(0,10); $('feed').innerHTML=feed.map(f=>`<div class='feed-item'><img class='avatar' src='${avatar(f.username)}' style='width:28px;height:28px'><div>@${f.username} just said gRitual · ${Math.max(1,Math.floor((Date.now()-f.time)/60000))}m ago</div></div>`).join('');}
+function updateUI(){setProfile();updateStats();updateButton();renderShare();renderBoard();renderFeed();}
+$('connectBtn').onclick=connect; $('saveTwitter').onclick=()=>{if(!address){$('status').textContent='Connect wallet first.';return;} const username=$('twitterInput').value.trim().replace('@',''); if(!username){$('status').textContent='Enter Twitter username.';return;} setUser(address,{username}); updateUI();}; $('ritualBtn').onclick=doRitual; $('saveCard').onclick=async()=>{renderShare(); const c=await html2canvas($('shareCard')); const a=document.createElement('a'); a.download='gritual-card.png'; a.href=c.toDataURL('image/png'); a.click();}; $('postX').onclick=()=>{const u=address?getUser(address):{streak:0}; const text=encodeURIComponent(`Just said gRitual ☀️ on @ritualnet testnet!\nDay ${u.streak||0} streak 🔥\n${txLink||CFG.explorer}\nbuilt by @tanviriqbal0`); window.open(`https://twitter.com/intent/tweet?text=${text}`,'_blank')}; $('tabCount').onclick=()=>{sortMode='count';renderBoard()}; $('tabStreak').onclick=()=>{sortMode='streak';renderBoard()};
+seed(); setInterval(tick,1000); tick(); updateUI();
+</script>
+</body>
+</html>
