@@ -11,59 +11,49 @@
     <script src="app.js" defer></script>
   </head>
   <body>
-    <div class="bg-orb orb-a"></div>
-    <div class="bg-orb orb-b"></div>
-
-    <main class="container">
-      <header class="hero card">
-        <div class="brand">
-          <img src="assets/gritual-logo.svg" alt="gRitual logo" id="brandLogo" />
-          <div>
-            <h1>gRitual</h1>
-            <p>One daily ritual. On-chain. Ritual testnet.</p>
-          </div>
-        </div>
-        <a class="creator" href="https://x.com/tanviriqbal0" target="_blank" rel="noreferrer">build by @tanviriqbal0</a>
-      </header>
-
-      <section class="card top-actions">
+    <header class="topbar">
+      <div class="left-nav">
+        <button class="nav-btn" data-page="leaderboardPage">Leaderboard</button>
+        <button class="nav-btn" data-page="cardPage">My Card</button>
+      </div>
+      <div class="right-nav">
         <button id="connectBtn">Connect Wallet</button>
         <button id="switchBtn" class="secondary">Switch Ritual</button>
-        <button id="refreshBtn" class="secondary">Refresh Board</button>
-        <p id="walletState">Wallet: not connected</p>
-        <p id="networkState">Network: unknown</p>
-      </section>
+      </div>
+    </header>
 
-      <section class="grid">
-        <article class="card">
-          <h2>Twitter Identity</h2>
-          <label for="twitterInput">Username</label>
-          <div class="row">
-            <input id="twitterInput" type="text" placeholder="tanviriqbal0" />
-            <button id="saveTwitterBtn">Save</button>
-          </div>
+    <main class="wrap">
+      <section id="mainPage" class="page active">
+        <img src="assets/gritual-logo.svg" class="main-logo" alt="logo" />
+        <h1>gRitual</h1>
+        <p class="small">One daily ritual on Ritual testnet</p>
+        <div class="bubble">
+          <p class="small">Daily limit 1x (UTC)</p>
+          <button id="submitBtn" class="bubble-btn">Send gRitual</button>
+          <p id="txState"></p>
+        </div>
+        <div class="profile-inline">
+          <input id="twitterInput" type="text" placeholder="Twitter username" />
+          <button id="saveTwitterBtn">Save</button>
           <div id="profileBox" class="profile"></div>
-
-          <div class="ritual-cta">
-            <p class="small">Limit: 1x per day (UTC)</p>
-            <button id="submitBtn">Send gRitual</button>
-            <p id="txState"></p>
-          </div>
-        </article>
-
-        <article class="card">
-          <h2>My Identity Card</h2>
-          <div id="rankCard" class="rank-card"></div>
-          <div class="row">
-            <button id="saveCardBtn" class="secondary">Save PNG</button>
-            <button id="tweetCardBtn">Post to X</button>
-          </div>
-        </article>
+        </div>
+        <p id="walletState" class="small">Wallet: not connected</p>
+        <p id="networkState" class="small">Network: unknown</p>
       </section>
 
-      <section class="card">
-        <h2>Leaderboard</h2>
+      <section id="leaderboardPage" class="page card">
+        <div class="page-head"><h2>Leaderboard</h2><button id="refreshBtn" class="secondary">Refresh</button></div>
         <ul id="leaderboard"></ul>
+      </section>
+
+      <section id="cardPage" class="page card">
+        <h2>My Identity Card</h2>
+        <div id="rankCard" class="rank-card"></div>
+        <div class="row">
+          <button id="saveCardBtn" class="secondary">Save PNG</button>
+          <button id="tweetCardBtn">Post to X</button>
+        </div>
+        <a class="creator" href="https://x.com/tanviriqbal0" target="_blank" rel="noreferrer">build by @tanviriqbal0</a>
       </section>
     </main>
   </body>

@@ -14,6 +14,17 @@ const profileBox = document.getElementById("profileBox");
 const leaderboardEl = document.getElementById("leaderboard");
 const rankCard = document.getElementById("rankCard");
 
+const pageButtons = document.querySelectorAll(".nav-btn");
+const pages = document.querySelectorAll(".page");
+
+function showPage(id) {
+  pages.forEach((p) => p.classList.remove("active"));
+  const el = document.getElementById(id) || document.getElementById("mainPage");
+  el.classList.add("active");
+}
+
+pageButtons.forEach((btn) => btn.addEventListener("click", () => showPage(btn.dataset.page)));
+
 const STORAGE = "gritual_profile_v2";
 const LAST_RITUAL_KEY = "gritual_last_ritual_utc";
 
