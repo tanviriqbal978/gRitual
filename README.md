@@ -1,51 +1,33 @@
 # gRitual
 
-`gRitual` is a lightweight **gm.ink-inspired** dApp prototype for the **Ritual testnet**.
+A gm.ink-inspired Ritual testnet dApp where users can do one on-chain **gRitual** per day.
 
-## What this starter includes
+## Features
 
-- Wallet connect (MetaMask-compatible)
-- Ritual testnet network switch/add flow
-- A “GM check-in” form (message + optional note)
-- Submission to an on-chain `checkIn(string)` method (configurable contract address)
-- Local check-in history persisted in browser storage
+- Wallet connect + network switch to Ritual testnet (`chainId: 1979`)
+- Manual Twitter/X username input
+- Auto avatar rendering from username (`unavatar.io`)
+- On-chain gRitual transaction (`checkIn(string)`)
+- Daily limit: 1 ritual/day per wallet (UTC, client-side)
+- Live on-chain leaderboard (from `CheckedIn` events)
+- Personal rank card with save-as-image support
+- One-click X post intent including creator credit
 
-## Quick start
+## Contract and network
 
-1. Serve the project with any static server:
+- Contract: `0x1df6796388607ceed59f5cbdCaDDafCaD088799b`
+- RPC: `https://rpc.ritualfoundation.org`
+- Explorer: `https://explorer.ritualfoundation.org`
 
-   ```bash
-   python3 -m http.server 4173
-   ```
+## Run
 
-2. Open <http://localhost:4173>
-3. Connect wallet
-4. Add/switch to Ritual testnet when prompted
-5. Set your deployed contract address in the UI and submit a GM
-
-## Ritual network config
-
-The app is preconfigured with placeholder values in `config.js`.
-Update them to match the current official Ritual testnet parameters.
-
-## Contract ABI expectation
-
-This UI expects a contract with the function:
-
-```solidity
-function checkIn(string calldata message) external;
+```bash
+python3 -m http.server 4173
 ```
 
-and optionally an event:
+Then open `http://localhost:4173`.
 
-```solidity
-event CheckedIn(address indexed user, string message, uint256 timestamp);
-```
+## Notes
 
-## Files
-
-- `index.html` – UI markup
-- `styles.css` – styling
-- `app.js` – dApp logic
-- `config.js` – network defaults and constants
-
+- Replace `assets/gritual-logo.svg` with your provided logo file if needed.
+- Daily limit is enforced in browser storage; for strict anti-spam, enforce limit inside the smart contract too.
